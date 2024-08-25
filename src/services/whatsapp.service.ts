@@ -5,9 +5,11 @@ dotenv.config();
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
-const twilioNumber = process.env.TWILIO_NUMBER;
+const twilioWhatsappNumber = process.env.TWILIO_WHATSAPP_NUMBER;
+const twilioSmsNumber = process.env.TWILIO_SMS_NUMBER;
 
-if (!accountSid || !authToken || !twilioNumber) {
+
+if (!accountSid || !authToken || !twilioSmsNumber || !twilioWhatsappNumber) {
     throw new Error('Twilio credentials are not set');
 }
 
@@ -21,7 +23,7 @@ export async function sendWhatsAppMessage(to: string, body: string) {
 
         const message = await client.messages.create({
             body,
-            from: 'whatsapp:' + twilioNumber,
+            from: 'whatsapp:' + twilioWhatsappNumber,
             to
         });
         return message;
@@ -35,7 +37,7 @@ export async function sendSMSMessage(to: string, body: string) {
     try {
         const message = await client.messages.create({
             body,
-            from: twilioNumber,
+            from: twilioSmsNumber,
             to
         });
         return message;
