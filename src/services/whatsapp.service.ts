@@ -27,6 +27,20 @@ export async function sendWhatsAppMessage(to: string, body: string) {
         return message;
     } catch (error) {
         console.error('Failed to send WhatsApp message:', error);
+        return sendSMSMessage(to, body);
+    }
+}
+
+export async function sendSMSMessage(to: string, body: string) {
+    try {
+        const message = await client.messages.create({
+            body,
+            from: twilioNumber,
+            to
+        });
+        return message;
+    } catch (error) {
+        console.error('Failed to send SMS message:', error);
         throw error;
     }
 }
