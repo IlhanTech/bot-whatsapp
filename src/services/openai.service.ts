@@ -7,13 +7,15 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-export async function getOpenAiCompletion(prompt: string): Promise<string> {
+export async function getOpenAiCompletion(prompt: string, specialPrompt: string): Promise<string> {
     try {
         const response = await openai.chat.completions.create({
             model: 'gpt-4',
             messages: [
+                { role: 'system', content: specialPrompt },
                 { role: 'user', content: prompt }
-            ]
+            ],
+            max_tokens: 150,
         });
         const content = response.choices[0].message.content;
         return content !== null ? content : '';

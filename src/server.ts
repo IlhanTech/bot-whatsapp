@@ -5,55 +5,36 @@ import { sendWhatsAppMessage } from './services/whatsapp.service';
 
 const app = express();
 const port = process.env.PORT || 3000;
+const AirBnbDescription = process.env.AIRBNB_DESCRIPTION;
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
-app.post('/api/generate-text', async (req, res) => {
-    try {
-        console.log('Received prompt:', req.body.prompt);
-        const prompt = req.body.prompt;
-        const completion = await getOpenAiCompletion(prompt);
-        res.status(200).json({ completion });
-    } catch (error) {
-        console.error('Error in /api/generate-text:', error);
-        res.status(500).json({ error: 'Failed to generate text' });
-    }
-});
-
-app.post('/api/send-whatsapp-message', async (req, res) => {
-    try {
-        console.log('Sending message to:', req.body.to);
-        const to = req.body.to;
-        const body = req.body.body;
-        const message = await sendWhatsAppMessage(to, body);
-        res.status(200).json({ message });
-    } catch (error) {
-        console.error('Error in /api/send-whatsapp-message:', error);
-        res.status(500).json({ error: 'Failed to send WhatsApp message' });
-    }
-});
-
 app.post('/webhook/incoming-message', async (req, res) => {
+
     const from = req.body.From;
     const body = req.body.Body;
 
-    console.log('Received message:', { from, body });
+    if (!from || !body) {
+        console.error('Invalid request body');
+        return res.status(400).send('Invalid request body');
+    }
+
+    if (!AirBnbDescription) {
+        console.error('AirBnbDescription is not defined');
+        return res.status(500).json({ error: 'Failed to send WhatsApp message' });
+    }
 
     try {
-        if (body === 'Hi') {
-            console.log('Sending response to:', from);
-            await sendWhatsAppMessage(from, 'Hello there!');
-        } else {
-            console.log('Sending default response to:', from);
-            await sendWhatsAppMessage(from, 'I am a bot and I do not understand your message');
-        }
-        res.status(200).send();
+        const completion = await getOpenAiCompletion(body, AirBnbDescription);
+        const message = await sendWhatsAppMessage(from, completion);
+        res.status(200).json({ message });
     } catch (error) {
-        console.error('Error in /webhook/incoming-message:', error);
-        res.status(500).send();
+        console.error('Error in /webhook/incoming-message: ', error);
+        res.status(500).json({ error: 'Failed to send WhatsApp message' });
     }
 });
