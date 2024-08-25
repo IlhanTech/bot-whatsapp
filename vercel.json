@@ -8,16 +8,8 @@
     ],
     "routes": [
         {
-            "src": "/api/(.*)",
-            "dest": "/src/server.ts"
-        },
-        {
-            "src": "/webhook/incoming-message",
-            "dest": "/src/server.ts"
-        },
-        {
             "src": "/(.*)",
-            "dest": "/"
+            "dest": "/src/server.ts"
         }
     ]
 }
