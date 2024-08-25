@@ -15,7 +15,7 @@ app.listen(port, () => {
 });
 
 app.post('/webhook/incoming-message', async (req, res) => {
-
+    console.log('Incoming message: ', req.body);
     const from = req.body.From;
     const body = req.body.Body;
 
@@ -32,6 +32,7 @@ app.post('/webhook/incoming-message', async (req, res) => {
     try {
         const completion = await getOpenAiCompletion(body, AirBnbDescription);
         const message = await sendWhatsAppMessage(from, completion);
+        console.log('Message sent: ', message);
         res.status(200).json({ message });
     } catch (error) {
         console.error('Error in /webhook/incoming-message: ', error);
