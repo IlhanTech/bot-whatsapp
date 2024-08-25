@@ -41,15 +41,18 @@ app.post('/webhook/incoming-message', async (req, res) => {
     const from = req.body.From;
     const body = req.body.Body;
 
+    console.log('Received message:', { from, body });
+
     try {
         if (body === 'Hi') {
+            console.log('Sending response to:', from);
             await sendWhatsAppMessage(from, 'Hello there!');
         } else {
+            console.log('Sending default response to:', from);
             await sendWhatsAppMessage(from, 'I am a bot and I do not understand your message');
         }
         res.status(200).send();
-    }
-    catch (error) {
+    } catch (error) {
         console.error('Error in /webhook/incoming-message:', error);
         res.status(500).send();
     }
