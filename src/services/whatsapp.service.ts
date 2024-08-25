@@ -26,6 +26,7 @@ export async function sendWhatsAppMessage(to: string, body: string) {
         });
         return message;
     } catch (error) {
+        console.error('Failed to send WhatsApp message:', error);
         return sendSMSMessage(to, body);
     }
 }
