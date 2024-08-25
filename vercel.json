@@ -14,9 +14,7 @@
         {
             "src": "/webhook/incoming-message",
             "dest": "/src/server.ts"
-        }
-    ],
-    "rewrites": [
+        },
         {
             "src": "/(.*)",
             "dest": "/"
